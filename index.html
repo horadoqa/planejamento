@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>2027 — Planejamento</title>
+
+  <!-- Tipografia -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --green: #0F3D2E;
+      --moss: #3F6F52;
+      --signal: #8FE3B0;
+      --gold: #C99A44;
+      --ivory: #F3EFE6;
+      --ink: #12201A;
+      --white: #fffdf8;
+      --line: rgba(15, 61, 46, 0.14);
+      --muted: #6D786F;
+      --danger: #A95742;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--ivory);
+      color: var(--ink);
+      font-family: "Manrope", sans-serif;
+      min-height: 100vh;
+    }
+
+    /* =========================
+       LAYOUT
+    ========================= */
+
+    .app {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: var(--green);
+      color: var(--ivory);
+      padding: 28px 22px;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .main {
+      padding: 38px 46px 60px;
+      max-width: 1600px;
+      width: 100%;
+      margin: auto;
+    }
+
+    /* =========================
+       LOGO
+    ========================= */
+
+    .logo-area {
+      height: 92px;
+      border: 1px dashed rgba(243, 239, 230, .45);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 44px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-area::before {
+      content: "";
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border: 1px solid rgba(143, 227, 176, .2);
+      border-radius: 50%;
+    }
+
+    .logo-placeholder {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .logo-placeholder strong {
+      display: block;
+      font-family: "Newsreader", serif;
+      font-size: 24px;
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .logo-placeholder span {
+      display: block;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+      letter-spacing: .16em;
+      opacity: .6;
+      margin-top: 3px;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .nav-label {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--signal);
+      font-size: 10px;
+      letter-spacing: .14em;
+      margin-bottom: 14px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .nav a {
+      color: rgba(243,239,230,.7);
+      text-decoration: none;
+      padding: 12px 13px;
+      border-radius: 9px;
+      font-size: 13px;
+      transition: .2s;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      background: rgba(143, 227, 176, .1);
+      color: var(--ivory);
+    }
+
+    .nav a.active {
+      border-left: 2px solid var(--signal);
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      border-top: 1px solid rgba(243,239,230,.12);
+      padding-top: 20px;
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      color: rgba(243,239,230,.6);
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      box-shadow: 0 0 0 4px rgba(143,227,176,.08);
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 48px;
+    }
+
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--moss);
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-family: "Newsreader", serif;
+      font-size: clamp(50px, 7vw, 88px);
+      font-weight: 400;
+      line-height: .86;
+      letter-spacing: -.04em;
+    }
+
+    h1 em {
+      color: var(--moss);
+    }
+
+    .top-meta {
+      text-align: right;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .top-meta strong {
+      color: var(--green);
+    }
+
+    /* =========================
+       OVERVIEW
+    ========================= */
+
+    .overview {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 52px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .big-card {
+      padding: 28px;
+      background: var(--green);
+      color: var(--ivory);
+      min-height: 190px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .big-card::after {
+      content: "2027";
+      position: absolute;
+      right: -8px;
+      bottom: -35px;
+      font-family: "Newsreader", serif;
+      font-style: italic;
+      font-size: 130px;
+      color: rgba(143,227,176,.06);
+    }
+
+    .card-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 15px;
+    }
+
+    .big-card .card-label {
+      color: rgba(243,239,230,.6);
+    }
+
+    .big-number {
+      font-family: "Newsreader", serif;
+      font-size: 60px;
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .big-description {
+      font-size: 12px;
+      color: rgba(243,239,230,.65);
+      margin-top: 12px;
+      max-width: 280px;
+      line-height: 1.6;
+    }
+
+    .metric-card {
+      padding: 23px;
+      min-height: 190px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .metric-value {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 30px;
+      font-weight: 500;
+      color: var(--green);
+    }
+
+    .metric-change {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      gap: 5px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      color: var(--moss);
+      background: rgba(63,111,82,.09);
+      padding: 5px 7px;
+      border-radius: 5px;
+    }
+
+    /* =========================
+       SECTION
+    ========================= */
+
+    .section {
+      margin-bottom: 55px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-family: "Newsreader", serif;
+      font-size: 32px;
+      font-weight: 400;
+    }
+
+    .section-title em {
+      font-style: italic;
+    }
+
+    .section-meta {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    /* =========================
+       QUARTERS
+    ========================= */
+
+    .quarters {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .quarter {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .quarter:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(18,32,26,.07);
+    }
+
+    .quarter-top {
+      padding: 20px 20px 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .quarter-code {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--moss);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .quarter-title {
+      font-family: "Newsreader", serif;
+      font-size: 25px;
+      margin-top: 7px;
+    }
+
+    .quarter-focus {
+      padding: 18px 20px;
+      min-height: 100px;
+    }
+
+    .quarter-focus p {
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .quarter-footer {
+      padding: 14px 20px 20px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      margin-bottom: 8px;
+    }
+
+    .progress-header span:last-child {
+      color: var(--moss);
+    }
+
+    .progress {
+      height: 5px;
+      background: #e6e5dc;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--moss);
+      border-radius: inherit;
+    }
+
+    .q2 .progress-bar {
+      background: var(--signal);
+    }
+
+    .q3 .progress-bar {
+      background: var(--gold);
+    }
+
+    .q4 .progress-bar {
+      background: var(--green);
+    }
+
+    /* =========================
+       KPI TABLE
+    ========================= */
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1.6fr .9fr;
+      gap: 14px;
+    }
+
+    .kpi-table {
+      overflow: hidden;
+    }
+
+    .table-head,
+    .kpi-row {
+      display: grid;
+      grid-template-columns: 1.5fr .7fr .7fr .7fr .8fr;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 20px;
+    }
+
+    .table-head {
+      background: var(--green);
+      color: var(--ivory);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .kpi-row {
+      border-bottom: 1px solid var(--line);
+      min-height: 68px;
+      font-size: 11px;
+    }
+
+    .kpi-row:last-child {
+      border-bottom: 0;
+    }
+
+    .kpi-name {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .kpi-sub {
+      display: block;
+      font-size: 9px;
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .kpi-number {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+      padding: 6px 8px;
+      border-radius: 5px;
+      width: fit-content;
+    }
+
+    .status.pass {
+      color: #2d6547;
+      background: rgba(143,227,176,.3);
+    }
+
+    .status.track {
+      color: #836323;
+      background: rgba(201,154,68,.14);
+    }
+
+    .status.risk {
+      color: var(--danger);
+      background: rgba(169,87,66,.10);
+    }
+
+    /* =========================
+       KPI SIDE
+    ========================= */
+
+    .kpi-summary {
+      padding: 24px;
+      background: var(--green);
+      color: var(--ivory);
+    }
+
+    .kpi-summary .card-label {
+      color: rgba(243,239,230,.55);
+    }
+
+    .score {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .score-number {
+      font-family: "Newsreader", serif;
+      font-size: 72px;
+      line-height: 1;
+    }
+
+    .score-total {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      opacity: .5;
+    }
+
+    .score-description {
+      font-size: 11px;
+      color: rgba(243,239,230,.62);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .mini-kpi {
+      padding: 13px 0;
+      border-top: 1px solid rgba(243,239,230,.12);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+    }
+
+    .mini-kpi strong {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--signal);
+    }
+
+    /* =========================
+       STRATEGIC GOALS
+    ========================= */
+
+    .goals {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .goal {
+      padding: 23px;
+      min-height: 200px;
+      position: relative;
+    }
+
+    .goal-number {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--moss);
+      font-size: 10px;
+      margin-bottom: 35px;
+    }
+
+    .goal h3 {
+      font-family: "Newsreader", serif;
+      font-size: 26px;
+      font-weight: 400;
+      margin-bottom: 9px;
+    }
+
+    .goal p {
+      font-size: 11px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .goal-tag {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+      color: var(--moss);
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .signal {
+      color: var(--moss);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 1100px) {
+      .overview {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .big-card {
+        grid-column: span 2;
+      }
+
+      .quarters {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .app {
+        display: block;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+        padding: 20px;
+      }
+
+      .logo-area {
+        width: 180px;
+        height: 70px;
+        margin-bottom: 20px;
+      }
+
+      .nav {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .sidebar-bottom {
+        display: none;
+      }
+
+      .main {
+        padding: 30px 20px 45px;
+      }
+
+      .topbar {
+        display: block;
+      }
+
+      .top-meta {
+        text-align: left;
+        margin-top: 20px;
+      }
+
+      .overview,
+      .quarters,
+      .goals {
+        grid-template-columns: 1fr;
+      }
+
+      .big-card {
+        grid-column: auto;
+      }
+
+      .table-head,
+      .kpi-row {
+        grid-template-columns: 1.4fr .7fr .7fr;
+      }
+
+      .table-head span:nth-child(4),
+      .table-head span:nth-child(5),
+      .kpi-row > :nth-child(4),
+      .kpi-row > :nth-child(5) {
+        display: none;
+      }
+
+      footer {
+        display: block;
+        line-height: 2;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- =========================
+       SIDEBAR
+  ========================== -->
+  <aside class="sidebar">
+
+    <!-- ESPAÇO PARA LOGO -->
+    <div class="logo-area">
+      <!--
+        SUBSTITUA ESTE BLOCO PELA SUA LOGO.
+
+        Exemplo:
+        <img src="logo.png" alt="Logo">
+      -->
+      <div class="logo-placeholder">
+        <strong>your logo</strong>
+        <span>LOGO / 2027</span>
+      </div>
+    </div>
+
+    <div class="nav-label">PLANNING / 2027</div>
+
+    <nav class="nav">
+      <a href="#overview" class="active">Overview</a>
+      <a href="#quarters">Quarters</a>
+      <a href="#kpis">KPIs</a>
+      <a href="#goals">Objectives</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="system-status">
+        <span class="dot"></span>
+        SYSTEM / ACTIVE
+      </div>
+    </div>
+
+  </aside>
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+  <main class="main">
+
+    <!-- HEADER -->
+    <header class="topbar" id="overview">
+
+      <div>
+        <div class="eyebrow">Annual operating plan</div>
+
+        <h1>
+          2027<br>
+          <em>Planejamento</em>
+        </h1>
+      </div>
+
+      <div class="top-meta">
+        <div>DOCUMENT / <strong>PLN-2027</strong></div>
+        <div>VERSION / <strong>01.00</strong></div>
+        <div>STATUS / <strong>IN PROGRESS</strong></div>
+        <div>UPDATED / <strong>SEP 2026</strong></div>
+      </div>
+
+    </header>
+
+
+    <!-- OVERVIEW -->
+    <section class="overview">
+
+      <div class="big-card card">
+
+        <div class="card-label">Annual objective</div>
+
+        <div class="big-number">2027</div>
+
+        <p class="big-description">
+          Transformar estratégia em execução mensurável,
+          acompanhando objetivos, indicadores e resultados
+          ao longo de quatro ciclos trimestrais.
+        </p>
+
+      </div>
+
+
+      <div class="metric-card card">
+
+        <div class="card-label">Annual target</div>
+
+        <div class="metric-value">R$ 1.2M</div>
+
+        <div class="metric-change">
+          ↑ 24% / target
+        </div>
+
+      </div>
+
+
+      <div class="metric-card card">
+
+        <div class="card-label">Active KPIs</div>
+
+        <div class="metric-value">12</div>
+
+        <div class="metric-change">
+          ● monitored
+        </div>
+
+      </div>
+
+
+      <div class="metric-card card">
+
+        <div class="card-label">Execution</div>
+
+        <div class="metric-value">68%</div>
+
+        <div class="metric-change">
+          ↑ +8.4%
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- QUARTERS -->
+    <section class="section" id="quarters">
+
+      <div class="section-header">
+
+        <div>
+          <div class="eyebrow">01 / Timeline</div>
+          <h2 class="section-title">
+            O ano em <em>quatro ciclos</em>
+          </h2>
+        </div>
+
+        <div class="section-meta">
+          Q1 → Q4 / 12 MONTHS
+        </div>
+
+      </div>
+
+
+      <div class="quarters">
+
+        <!-- Q1 -->
+        <article class="quarter q1">
+
+          <div class="quarter-top">
+            <div class="quarter-code">Q1 / JAN — MAR</div>
+            <h3 class="quarter-title">Fundação</h3>
+          </div>
+
+          <div class="quarter-focus">
+            <p>
+              Estruturar processos, definir baseline dos KPIs
+              e estabelecer as principais metas do ano.
+            </p>
+          </div>
+
+          <div class="quarter-footer">
+
+            <div class="progress-header">
+              <span>EXECUTION</span>
+              <span>82%</span>
+            </div>
+
+            <div class="progress">
+              <div class="progress-bar" style="width:82%"></div>
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <!-- Q2 -->
+        <article class="quarter q2">
+
+          <div class="quarter-top">
+            <div class="quarter-code">Q2 / APR — JUN</div>
+            <h3 class="quarter-title">Tração</h3>
+          </div>
+
+          <div class="quarter-focus">
+            <p>
+              Acelerar iniciativas prioritárias e validar
+              os primeiros resultados contra as metas.
+            </p>
+          </div>
+
+          <div class="quarter-footer">
+
+            <div class="progress-header">
+              <span>EXECUTION</span>
+              <span>71%</span>
+            </div>
+
+            <div class="progress">
+              <div class="progress-bar" style="width:71%"></div>
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <!-- Q3 -->
+        <article class="quarter q3">
+
+          <div class="quarter-top">
+            <div class="quarter-code">Q3 / JUL — SEP</div>
+            <h3 class="quarter-title">Otimização</h3>
+          </div>
+
+          <div class="quarter-focus">
+            <p>
+              Identificar gargalos, redistribuir recursos e
+              otimizar iniciativas com base nos dados.
+            </p>
+          </div>
+
+          <div class="quarter-footer">
+
+            <div class="progress-header">
+              <span>EXECUTION</span>
+              <span>64%</span>
+            </div>
+
+            <div class="progress">
+              <div class="progress-bar" style="width:64%"></div>
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <!-- Q4 -->
+        <article class="quarter q4">
+
+          <div class="quarter-top">
+            <div class="quarter-code">Q4 / OCT — DEC</div>
+            <h3 class="quarter-title">Consolidação</h3>
+          </div>
+
+          <div class="quarter-focus">
+            <p>
+              Consolidar resultados, fechar metas anuais e
+              preparar o próximo ciclo estratégico.
+            </p>
+          </div>
+
+          <div class="quarter-footer">
+
+            <div class="progress-header">
+              <span>EXECUTION</span>
+              <span>38%</span>
+            </div>
+
+            <div class="progress">
+              <div class="progress-bar" style="width:38%"></div>
+            </div>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- KPIs -->
+    <section class="section" id="kpis">
+
+      <div class="section-header">
+
+        <div>
+          <div class="eyebrow">02 / Measurement</div>
+
+          <h2 class="section-title">
+            KPI <em>Control Room</em>
+          </h2>
+        </div>
+
+        <div class="section-meta">
+          STATUS / LIVE TRACKING
+        </div>
+
+      </div>
+
+
+      <div class="kpi-grid">
+
+        <!-- TABELA -->
+        <div class="kpi-table card">
+
+          <div class="table-head">
+            <span>Indicator</span>
+            <span>Actual</span>
+            <span>Target</span>
+            <span>Progress</span>
+            <span>Status</span>
+          </div>
+
+
+          <div class="kpi-row">
+
+            <div class="kpi-name">
+              Receita
+              <span class="kpi-sub">Annual revenue</span>
+            </div>
+
+            <div class="kpi-number">R$ 820k</div>
+            <div class="kpi-number">R$ 1.2M</div>
+            <div class="kpi-number">68%</div>
+
+            <div>
+              <span class="status pass">● PASS</span>
+            </div>
+
+          </div>
+
+
+          <div class="kpi-row">
+
+            <div class="kpi-name">
+              Clientes
+              <span class="kpi-sub">Active accounts</span>
+            </div>
+
+            <div class="kpi-number">284</div>
+            <div class="kpi-number">400</div>
+            <div class="kpi-number">71%</div>
+
+            <div>
+              <span class="status pass">● PASS</span>
+            </div>
+
+          </div>
+
+
+          <div class="kpi-row">
+
+            <div class="kpi-name">
+              Retenção
+              <span class="kpi-sub">Customer retention</span>
+            </div>
+
+            <div class="kpi-number">87%</div>
+            <div class="kpi-number">90%</div>
+            <div class="kpi-number">97%</div>
+
+            <div>
+              <span class="status track">● TRACK</span>
+            </div>
+
+          </div>
+
+
+          <div class="kpi-row">
+
+            <div class="kpi-name">
+              Margem
+              <span class="kpi-sub">Operating margin</span>
+            </div>
+
+            <div class="kpi-number">21%</div>
+            <div class="kpi-number">25%</div>
+            <div class="kpi-number">84%</div>
+
+            <div>
+              <span class="status track">● TRACK</span>
+            </div>
+
+          </div>
+
+
+          <div class="kpi-row">
+
+            <div class="kpi-name">
+              NPS
+              <span class="kpi-sub">Customer experience</span>
+            </div>
+
+            <div class="kpi-number">62</div>
+            <div class="kpi-number">70</div>
+            <div class="kpi-number">89%</div>
+
+            <div>
+              <span class="status risk">● RISK</span>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- RESUMO -->
+        <aside class="kpi-summary card">
+
+          <div class="card-label">KPI health</div>
+
+          <div class="score">
+
+            <span class="score-number">84</span>
+            <span class="score-total">/ 100</span>
+
+          </div>
+
+          <p class="score-description">
+            Indicadores dentro ou próximos da trajetória
+            definida para o ciclo anual.
+          </p>
+
+
+          <div class="mini-kpi">
+            <span>PASS</span>
+            <strong>08</strong>
+          </div>
+
+          <div class="mini-kpi">
+            <span>TRACK</span>
+            <strong>03</strong>
+          </div>
+
+          <div class="mini-kpi">
+            <span>RISK</span>
+            <strong>01</strong>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </section>
+
+
+    <!-- OBJECTIVES -->
+    <section class="section" id="goals">
+
+      <div class="section-header">
+
+        <div>
+          <div class="eyebrow">03 / Strategy</div>
+
+          <h2 class="section-title">
+            Objetivos <em>do ano</em>
+          </h2>
+        </div>
+
+        <div class="section-meta">
+          03 STRATEGIC PILLARS
+        </div>
+
+      </div>
+
+
+      <div class="goals">
+
+        <article class="goal card">
+
+          <span class="goal-tag">01 / GROWTH</span>
+
+          <div class="goal-number">OBJECTIVE / 01</div>
+
+          <h3>Crescer com consistência</h3>
+
+          <p>
+            Aumentar receita e aquisição sem comprometer
+            margem, qualidade da operação ou retenção.
+          </p>
+
+        </article>
+
+
+        <article class="goal card">
+
+          <span class="goal-tag">02 / PRODUCT</span>
+
+          <div class="goal-number">OBJECTIVE / 02</div>
+
+          <h3>Construir valor</h3>
+
+          <p>
+            Priorizar iniciativas que gerem impacto real
+            para clientes e fortaleçam o produto.
+          </p>
+
+        </article>
+
+
+        <article class="goal card">
+
+          <span class="goal-tag">03 / OPERATION</span>
+
+          <div class="goal-number">OBJECTIVE / 03</div>
+
+          <h3>Operar melhor</h3>
+
+          <p>
+            Melhorar processos, reduzir desperdícios e
+            transformar dados em decisões mais rápidas.
+          </p>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+      <span>
+        2027 / PLANNING SYSTEM
+      </span>
+
+      <span>
+        <span class="signal">●</span>
+        DATA / STRATEGY / EXECUTION
+      </span>
+
+    </footer>
+
+  </main>
+
+</div>
+
+
+<script>
+  /*
+   * Pequenas interações:
+   * - Atualiza o ano automaticamente
+   * - Marca item ativo da navegação
+   */
+
+  const sections = document.querySelectorAll("section[id]");
+  const navLinks = document.querySelectorAll(".nav a");
+
+  window.addEventListener("scroll", () => {
+
+    let current = "";
+
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 150;
+
+      if (window.scrollY >= sectionTop) {
+        current = section.getAttribute("id");
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove("active");
+
+      if (link.getAttribute("href") === "#" + current) {
+        link.classList.add("active");
+      }
+    });
+
+  });
+</script>
+
+</body>
+</html>
